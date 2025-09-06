@@ -3,13 +3,11 @@ function has_command {
 }
 
 # pnpm
-if has_command pnpm; then
-  export PNPM_HOME="/root/.local/share/pnpm"
-  case ":$PATH:" in
-    *":$PNPM_HOME:"*) ;;
-    *) export PATH="$PNPM_HOME:$PATH" ;;
-  esac
-fi
+export PNPM_HOME="/root/.local/share/pnpm"
+case ":$PATH:" in
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 # pnpm end
 
 # manual
@@ -21,4 +19,3 @@ fi
 if has_command starship; then
   eval "$(starship init bash)"
 fi
-
