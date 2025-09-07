@@ -19,3 +19,6 @@ fi
 if has_command starship; then
   eval "$(starship init bash)"
 fi
+
+# turn of notification bell sound
+bind 'set bell-style none'
