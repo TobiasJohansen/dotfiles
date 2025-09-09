@@ -768,6 +768,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        typescript = { 'prettier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1029,14 +1030,14 @@ require('lazy').setup({
   },
 })
 
-vim.filetype.add({
-	pattern = {
-		[".*%.component%.html"] = "htmlangular",
-		[".*%.container%.html"] = "htmlangular",
-		[".*%.page%.html"] = "htmlangular",
-		[".*%.template%.html"] = "htmlangular",
-	},
-})
+vim.filetype.add {
+  pattern = {
+    ['.*%.component%.html'] = 'htmlangular',
+    ['.*%.container%.html'] = 'htmlangular',
+    ['.*%.page%.html'] = 'htmlangular',
+    ['.*%.template%.html'] = 'htmlangular',
+  },
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
