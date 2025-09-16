@@ -185,25 +185,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -1013,6 +998,45 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {
+        view = {
+          width = 50,
+        },
+      }
+      vim.keymap.set('n', '<leader>tt', require('nvim-tree.api').tree.toggle, { desc = '[T]oggle [T]ree' })
+    end,
+  },
+  {
+    'mrjones2014/smart-splits.nvim',
+    config = function()
+      local smartsplits = require 'smart-splits'
+
+      smartsplits.setup()
+
+      vim.keymap.set('n', '<C-k>', smartsplits.move_cursor_up, { desc = 'Move up' })
+      vim.keymap.set('n', '<C-l>', smartsplits.move_cursor_right, { desc = 'Move right' })
+      vim.keymap.set('n', '<C-j>', smartsplits.move_cursor_down, { desc = 'Move down' })
+      vim.keymap.set('n', '<C-h>', smartsplits.move_cursor_left, { desc = 'Move left' })
+
+      vim.keymap.set('n', '<M-k>', smartsplits.resize_up, { desc = 'Resize up' })
+      vim.keymap.set('n', '<M-l>', smartsplits.resize_right, { desc = 'Resize right' })
+      vim.keymap.set('n', '<M-j>', smartsplits.resize_down, { desc = 'Resize down' })
+      vim.keymap.set('n', '<M-h>', smartsplits.resize_left, { desc = 'Resize left' })
+
+      vim.keymap.set('n', '<C-w>k', smartsplits.swap_buf_up, { desc = 'Swap window up' })
+      vim.keymap.set('n', '<C-w>l', smartsplits.swap_buf_right, { desc = 'Swap window right' })
+      vim.keymap.set('n', '<C-w>j', smartsplits.swap_buf_down, { desc = 'Swap window down' })
+      vim.keymap.set('n', '<C-w>h', smartsplits.swap_buf_left, { desc = 'Swap window left' })
+    end,
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
