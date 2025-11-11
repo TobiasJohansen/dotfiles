@@ -10,6 +10,8 @@ case ":$PATH:" in
 esac
 # pnpm end
 
+export PATH="$(npm bin -g):$PATH"
+
 # manual
 if has_command nvim; then
   export MANPAGER="nvim +Man!"

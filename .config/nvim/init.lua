@@ -331,6 +331,8 @@ require('lazy').setup({
       spec = {
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>o', group = '[O]pen' },
+        { '<leader>c', group = '[C]lose' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -386,7 +388,6 @@ require('lazy').setup({
       -- Telescope picker. This is really useful to discover what Telescope can
       -- do as well as how to actually do it!
 
-      -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
@@ -711,7 +712,7 @@ require('lazy').setup({
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
+        automatic_installation = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
@@ -1011,7 +1012,7 @@ require('lazy').setup({
           width = 50,
         },
       }
-      vim.keymap.set('n', '<leader>tt', require('nvim-tree.api').tree.toggle, { desc = '[T]oggle [T]ree' })
+      vim.keymap.set('n', '<leader>tf', require('nvim-tree.api').tree.toggle, { desc = '[T]oggle [F]ile Tree' })
     end,
   },
   {
@@ -1035,6 +1036,29 @@ require('lazy').setup({
       vim.keymap.set('n', '<C-w>l', smartsplits.swap_buf_right, { desc = 'Swap window right' })
       vim.keymap.set('n', '<C-w>j', smartsplits.swap_buf_down, { desc = 'Swap window down' })
       vim.keymap.set('n', '<C-w>h', smartsplits.swap_buf_left, { desc = 'Swap window left' })
+    end,
+  },
+  'sindrets/diffview.nvim',
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('toggleterm').setup {
+        direction = 'float',
+      }
+      vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = '[T]oggle [T]erminal' })
+      vim.keymap.set('n', '<leader>st', '<cmd>TermSelect<CR>', { desc = '[S]earch [T]erminals' })
+      vim.keymap.set('n', '<leader>ct', function()
+        local terminals = require('toggleterm.terminal').get_all()
+        for _, term in pairs(terminals) do
+          if term:is_open() then
+            term:shutdown() -- Instantly kills the job and buffer
+          end
+        end
+      end, { desc = '[C]lose Open [T]erminals' })
+      vim.keymap.set('n', '<leader>ot', function()
+        require('toggleterm.terminal').Terminal:new():toggle()
+      end, { desc = '[O]pen [T]erminal' })
     end,
   },
 }, {
