@@ -760,6 +760,9 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         typescript = { 'prettier' },
+        htmlangular = { 'prettier' },
+        scss = { 'prettier' },
+        json = { 'prettier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1038,12 +1041,13 @@ require('lazy').setup({
       vim.keymap.set('n', '<C-w>h', smartsplits.swap_buf_left, { desc = 'Swap window left' })
     end,
   },
-  'sindrets/diffview.nvim',
   {
     'akinsho/toggleterm.nvim',
     version = '*',
     config = function()
       require('toggleterm').setup {
+        persist_mode = false,
+        start_in_insert = true,
         direction = 'float',
       }
       vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = '[T]oggle [T]erminal' })
@@ -1052,7 +1056,7 @@ require('lazy').setup({
         local terminals = require('toggleterm.terminal').get_all()
         for _, term in pairs(terminals) do
           if term:is_open() then
-            term:shutdown() -- Instantly kills the job and buffer
+            term:shutdown()
           end
         end
       end, { desc = '[C]lose Open [T]erminals' })
