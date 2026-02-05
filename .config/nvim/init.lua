@@ -761,6 +761,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         typescript = { 'prettier' },
         htmlangular = { 'prettier' },
+        html = { 'prettier' },
         scss = { 'prettier' },
         json = { 'prettier' },
         -- Conform can also run multiple formatters sequentially
@@ -1063,6 +1064,15 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ot', function()
         require('toggleterm.terminal').Terminal:new():toggle()
       end, { desc = '[O]pen [T]erminal' })
+    end,
+  },
+  {
+    'rachartier/tiny-inline-diagnostic.nvim',
+    event = 'VeryLazy',
+    priority = 1000,
+    config = function()
+      require('tiny-inline-diagnostic').setup()
+      vim.diagnostic.config { virtual_text = false } -- Disable Neovim's default virtual text diagnostics
     end,
   },
 }, {

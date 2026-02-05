@@ -10,8 +10,6 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-export PATH="$(npm bin -g):$PATH"
-
 # manual
 if has_command nvim; then
   export MANPAGER="nvim +Man!"
@@ -24,3 +22,8 @@ fi
 
 # turn of notification bell sound
 bind 'set bell-style none'
+
+# source local config if it exists
+if [ -f "${HOME}/.bashrc.local.sh" ]; then
+  . "${HOME}/.bashrc.local.sh"
+fi
