@@ -468,7 +468,7 @@ require('lazy').setup({
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
       { 'mason-org/mason.nvim', opts = {} },
-      'mason-org/mason-lspconfig.nvim',
+      { 'mason-org/mason-lspconfig.nvim', opts = {} },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
@@ -652,7 +652,8 @@ require('lazy').setup({
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'lua_ls', -- Lua Language server
+        -- TODO: LuaLS version is locked until this issue is resolved https://github.com/folke/lazydev.nvim/issues/136
+        { 'lua_ls', version = '3.16.4', auto_update = false }, -- Lua Language server
         'stylua', -- Used to format Lua code
         'shfmt', -- Used to format Shell code
         'prettier', -- Used to format JS/TS/HTML/CSS
@@ -971,8 +972,6 @@ require('lazy').setup({
     config = function()
       local smartsplits = require 'smart-splits'
 
-      smartsplits.setup()
-
       vim.keymap.set('n', '<C-k>', smartsplits.move_cursor_up, { desc = 'Move up' })
       vim.keymap.set('n', '<C-l>', smartsplits.move_cursor_right, { desc = 'Move right' })
       vim.keymap.set('n', '<C-j>', smartsplits.move_cursor_down, { desc = 'Move down' })
@@ -1044,14 +1043,6 @@ require('lazy').setup({
   },
 })
 
-vim.filetype.add {
-  pattern = {
-    ['.*%.component%.html'] = 'htmlangular',
-    ['.*%.container%.html'] = 'htmlangular',
-    ['.*%.page%.html'] = 'htmlangular',
-    ['.*%.template%.html'] = 'htmlangular',
-  },
-}
-
+--
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
