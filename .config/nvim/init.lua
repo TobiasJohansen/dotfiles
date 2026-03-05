@@ -288,6 +288,7 @@ require('lazy').setup({
       spec = {
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>r', group = '[R]un' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -952,22 +953,6 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
   {
-    'nvim-tree/nvim-tree.lua',
-    version = '*',
-    lazy = false,
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
-    config = function()
-      require('nvim-tree').setup {
-        view = {
-          width = 50,
-        },
-      }
-      vim.keymap.set('n', '<leader>tf', require('nvim-tree.api').tree.toggle, { desc = '[T]oggle [F]ile Tree' })
-    end,
-  },
-  {
     'mrjones2014/smart-splits.nvim',
     config = function()
       local smartsplits = require 'smart-splits'
@@ -1021,6 +1006,25 @@ require('lazy').setup({
       vim.diagnostic.config { virtual_text = false } -- Disable Neovim's default virtual text diagnostics
     end,
   },
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    lazy = false,
+    keys = {
+      { '<leader>oo', '<CMD>Oil<CR>', desc = '[O]pen [O]il' },
+    },
+  },
+  {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    opts = {
+      input = { enabled = true },
+    },
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1042,6 +1046,34 @@ require('lazy').setup({
     },
   },
 })
+
+vim.keymap.set('n', '<leader>rc', function()
+  vim.ui.input({
+    prompt = 'Run Command: ',
+    completion = 'shellcmd',
+  }, function(cmd)
+    if not cmd or cmd == '' then
+      return
+    end
+
+    -- vim.fn.histadd(':', cmd)
+    local Terminal = require('toggleterm.terminal').Terminal
+
+    local term = Terminal:new {
+      cmd = vim.o.shell .. ' -ic ' .. vim.fn.shellescape(cmd),
+      display_name = cmd,
+      close_on_exit = false,
+      on_exit = function(t)
+        if t:is_open() then
+          t:set_mode 'i'
+        end
+      end,
+    }
+
+    term:set_mode 'n'
+    term:toggle()
+  end)
+end, { desc = '[R]un [C]ommand' })
 
 --
 -- The line beneath this is called `modeline`. See `:help modeline`
