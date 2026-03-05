@@ -979,11 +979,26 @@ require('lazy').setup({
     config = function()
       require('toggleterm').setup {
         persist_mode = false,
-        start_in_insert = true,
+        start_in_insert = false,
         direction = 'float',
       }
-      vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = '[T]oggle [T]erminal' })
+
       vim.keymap.set('n', '<leader>st', '<cmd>TermSelect<CR>', { desc = '[S]earch [T]erminals' })
+
+      vim.keymap.set('n', '<leader>ot', function()
+        local term = require('toggleterm.terminal').Terminal:new()
+        term:set_mode 'i'
+        term:toggle()
+      end, { desc = '[O]pen [T]erminal' })
+
+      vim.keymap.set('n', '<leader>tt', function()
+        require('toggleterm').toggle()
+        local term = require('toggleterm.terminal').get(require('toggleterm.terminal').get_focused_id())
+        if term then
+          term:set_mode 'i'
+        end
+      end, { desc = '[T]oggle [T]erminal' })
+
       vim.keymap.set('n', '<leader>ct', function()
         local terminals = require('toggleterm.terminal').get_all()
         for _, term in pairs(terminals) do
@@ -992,9 +1007,6 @@ require('lazy').setup({
           end
         end
       end, { desc = '[C]lose Open [T]erminals' })
-      vim.keymap.set('n', '<leader>ot', function()
-        require('toggleterm.terminal').Terminal:new():toggle()
-      end, { desc = '[O]pen [T]erminal' })
     end,
   },
   {
