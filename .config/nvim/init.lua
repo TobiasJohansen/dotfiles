@@ -1066,6 +1066,9 @@ local create_new_terminal = function(cmd, toggle)
     cmd = vim.o.shell .. ' -ic ' .. vim.fn.shellescape(cmd),
     display_name = cmd,
     close_on_exit = false,
+    on_open = function(t)
+      t:set_mode 'n'
+    end,
     on_exit = function(t)
       if t:is_open() then
         t:set_mode 'i'
