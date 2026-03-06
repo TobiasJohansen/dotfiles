@@ -643,7 +643,6 @@ require('lazy').setup({
             },
           },
         },
-        pylsp = {},
         ts_ls = {},
       }
 
@@ -982,25 +981,17 @@ require('lazy').setup({
     config = function()
       require('toggleterm').setup {
         persist_mode = false,
-        start_in_insert = false,
+        start_in_insert = true,
         direction = 'float',
       }
 
       vim.keymap.set('n', '<leader>st', '<cmd>TermSelect<CR>', { desc = '[S]earch [T]erminals' })
 
       vim.keymap.set('n', '<leader>ot', function()
-        local term = require('toggleterm.terminal').Terminal:new()
-        term:set_mode 'i'
-        term:toggle()
+        require('toggleterm.terminal').Terminal:new():toggle()
       end, { desc = '[O]pen [T]erminal' })
 
-      vim.keymap.set('n', '<leader>tt', function()
-        require('toggleterm').toggle()
-        local term = require('toggleterm.terminal').get(require('toggleterm.terminal').get_focused_id())
-        if term then
-          term:set_mode 'i'
-        end
-      end, { desc = '[T]oggle [T]erminal' })
+      vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = '[T]oggle [T]erminal' })
 
       vim.keymap.set('n', '<leader>ct', function()
         local terminals = require('toggleterm.terminal').get_all()
@@ -1062,33 +1053,50 @@ require('lazy').setup({
   },
 })
 
+---@param cmd string?
+---@param toggle boolean
+local create_new_terminal = function(cmd, toggle)
+  if not cmd or cmd == '' then
+    return
+  end
+
+  local Terminal = require('toggleterm.terminal').Terminal
+
+  local term = Terminal:new {
+    cmd = vim.o.shell .. ' -ic ' .. vim.fn.shellescape(cmd),
+    display_name = cmd,
+    close_on_exit = false,
+    on_exit = function(t)
+      if t:is_open() then
+        t:set_mode 'i'
+      end
+    end,
+  }
+
+  if toggle then
+    term:toggle()
+  else
+    term:spawn()
+  end
+end
+
 vim.keymap.set('n', '<leader>rc', function()
   vim.ui.input({
     prompt = 'Run Command: ',
     completion = 'shellcmd',
   }, function(cmd)
-    if not cmd or cmd == '' then
-      return
-    end
-
-    -- vim.fn.histadd(':', cmd)
-    local Terminal = require('toggleterm.terminal').Terminal
-
-    local term = Terminal:new {
-      cmd = vim.o.shell .. ' -ic ' .. vim.fn.shellescape(cmd),
-      display_name = cmd,
-      close_on_exit = false,
-      on_exit = function(t)
-        if t:is_open() then
-          t:set_mode 'i'
-        end
-      end,
-    }
-
-    term:set_mode 'n'
-    term:toggle()
+    create_new_terminal(cmd, true)
   end)
 end, { desc = '[R]un [C]ommand' })
+
+vim.keymap.set('n', '<leader>rb', function()
+  vim.ui.input({
+    prompt = 'Run Background Command: ',
+    completion = 'shellcmd',
+  }, function(cmd)
+    create_new_terminal(cmd, false)
+  end)
+end, { desc = '[R]un [B]ackground Command' })
 
 --
 -- The line beneath this is called `modeline`. See `:help modeline`
