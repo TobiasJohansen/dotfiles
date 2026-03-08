@@ -20,6 +20,11 @@ if has_command starship; then
   eval "$(starship init bash)"
 fi
 
+# keychain
+if has_command keychain; then
+  eval $(keychain --eval --quiet)
+fi
+
 # turn of notification bell sound
 bind 'set bell-style none'
 
