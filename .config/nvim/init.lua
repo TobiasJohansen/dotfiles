@@ -1009,6 +1009,16 @@ require('lazy').setup({
         require('toggleterm.terminal').Terminal:new():toggle()
       end, { desc = '[O]pen [T]erminal' })
 
+      vim.keymap.set('n', '<leader>ol', function()
+        require('toggleterm.terminal').Terminal
+          :new({
+            cmd = vim.o.shell .. ' -ic ' .. 'lazygit',
+            display_name = 'lazygit',
+            close_on_exit = true,
+          })
+          :toggle()
+      end, { desc = '[O]pen [L]azygit' })
+
       vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = '[T]oggle [T]erminal' })
 
       vim.keymap.set('n', '<leader>ct', function()
@@ -1073,7 +1083,8 @@ require('lazy').setup({
 
 ---@param cmd string?
 ---@param toggle boolean
-local create_new_terminal = function(cmd, toggle)
+---@param open_in_normal_mode boolean
+local create_new_terminal = function(cmd, toggle, open_in_normal_mode)
   if not cmd or cmd == '' then
     return
   end
@@ -1085,7 +1096,9 @@ local create_new_terminal = function(cmd, toggle)
     display_name = cmd,
     close_on_exit = false,
     on_open = function(t)
-      t:set_mode 'n'
+      if open_in_normal_mode then
+        t:set_mode 'n'
+      end
     end,
     on_exit = function(t)
       if t:is_open() then
@@ -1106,7 +1119,7 @@ vim.keymap.set('n', '<leader>rc', function()
     prompt = 'Run Command: ',
     completion = 'shellcmd',
   }, function(cmd)
-    create_new_terminal(cmd, true)
+    create_new_terminal(cmd, true, true)
   end)
 end, { desc = '[R]un [C]ommand' })
 
@@ -1115,7 +1128,7 @@ vim.keymap.set('n', '<leader>rb', function()
     prompt = 'Run Background Command: ',
     completion = 'shellcmd',
   }, function(cmd)
-    create_new_terminal(cmd, false)
+    create_new_terminal(cmd, false, true)
   end)
 end, { desc = '[R]un [B]ackground Command' })
 
