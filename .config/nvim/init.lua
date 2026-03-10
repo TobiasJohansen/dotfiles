@@ -892,6 +892,7 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
     lazy = false,
     build = ':TSUpdate',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
