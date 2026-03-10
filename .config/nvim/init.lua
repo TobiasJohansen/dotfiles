@@ -679,6 +679,37 @@ require('lazy').setup({
           end,
         },
       }
+
+      local godot_lsp = 'godot-wsl-lsp'
+      local godot_lsp_cmd = { godot_lsp, '--experimentalFastPathConversion' }
+
+      vim.lsp.config('gdscript', { cmd = godot_lsp_cmd })
+      vim.lsp.enable 'gdscript'
+
+      local function setup_godot_lsp()
+        if vim.fn.executable(godot_lsp) == 0 then
+          local result = vim
+            .system({
+              'pnpm',
+              'install',
+              '-g',
+              'godot-wsl-lsp',
+              'ts-lsp-client@1.0.4',
+            }, { text = true })
+            :wait()
+
+          vim.lsp.start {
+            name = 'gdscript',
+            cmd = godot_lsp_cmd,
+          }
+        end
+      end
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'gdscript',
+        callback = setup_godot_lsp,
+        once = true,
+      })
     end,
   },
 
