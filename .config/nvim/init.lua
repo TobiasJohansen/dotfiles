@@ -695,28 +695,26 @@ require('lazy').setup({
 
         vim.lsp.config('gdscript', { cmd = godot_lsp_cmd })
 
-        local function setup_godot_lsp()
-          if vim.fn.executable(godot_lsp) == 0 then
-            vim
-              .system({
-                'pnpm',
-                'install',
-                '-g',
-                'godot-wsl-lsp',
-                'ts-lsp-client@1.0.4',
-              }, { text = true })
-              :wait()
-
-            vim.lsp.start {
-              name = 'gdscript',
-              cmd = godot_lsp_cmd,
-            }
-          end
-        end
-
         vim.api.nvim_create_autocmd('FileType', {
           pattern = 'gdscript',
-          callback = setup_godot_lsp,
+          callback = function()
+            if vim.fn.executable(godot_lsp) == 0 then
+              print 'Installing godot-wsl-lsp'
+              vim
+                .system({
+                  'pnpm',
+                  'install',
+                  '-g',
+                  'godot-wsl-lsp',
+                  -- Due to a problem with the newest ts-lsp-client version 1.1.0, lock it down to 1.0.4 until the following issue is adressed:
+                  -- https://github.com/ImperiumMaximus/ts-lsp-client/issues/33
+                  'ts-lsp-client@1.0.4',
+                })
+                :wait()
+
+              vim.lsp.start(vim.lsp.config.gdscript)
+            end
+          end,
           once = true,
         })
       end
