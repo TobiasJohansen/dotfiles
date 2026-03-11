@@ -680,44 +680,46 @@ require('lazy').setup({
         },
       }
 
-      -- TODO: This is a workaround to be able to work with godot on windows, with nvim in wsl
-      -- For this to work, the .wslconfig file on the host machine needs to include:
-      -- [wsl2]
-      -- networkingMode=mirrored
-      -- Its also needed to set nvim as external editor setting path=wt.exe and flags=-M -- wsl.exe bash -ic \"nvim $(wslpath '{file}') +{line}\"
-      -- Either find a way to include windows files in dotfiles, or find a replacement for this solution
-      -- https://github.com/venomlab/godot-wsl-proxy looks interesting as a replacement
-      -- Its also worth investigating if its possible to use lsp-config gdscript for this (might work when mirrored networking is turned on)
-      local godot_lsp = 'godot-wsl-lsp'
-      local godot_lsp_cmd = { godot_lsp, '--experimentalFastPathConversion', '--useMirroredNetworking', '--host', '127.0.0.1' }
-
-      vim.lsp.config('gdscript', { cmd = godot_lsp_cmd })
       vim.lsp.enable 'gdscript'
 
-      local function setup_godot_lsp()
-        if vim.fn.executable(godot_lsp) == 0 then
-          vim
-            .system({
-              'pnpm',
-              'install',
-              '-g',
-              'godot-wsl-lsp',
-              'ts-lsp-client@1.0.4',
-            }, { text = true })
-            :wait()
+      -- NB! This is a workaround to be able to work with godot on windows, with nvim in wsl
+      -- For this to work:
+      -- 1. Set nvim as external editor in godot with path=wt.exe and flags=-M -- wsl.exe bash -ic \"nvim $(wslpath '{file}') +{line}\"
+      -- 2. Enable mirrored network mode by adding the following to .wslconfig in the windows user folder:
+      -- [wsl2]
+      -- networkingMode=mirrored
+      -- 3. Restart wsl by running wsl --shutdown
+      if os.getenv 'WSL_DISTRO_NAME' ~= nil then
+        local godot_lsp = 'godot-wsl-lsp'
+        local godot_lsp_cmd = { godot_lsp, '--experimentalFastPathConversion', '--useMirroredNetworking', '--host', '127.0.0.1' }
 
-          vim.lsp.start {
-            name = 'gdscript',
-            cmd = godot_lsp_cmd,
-          }
+        vim.lsp.config('gdscript', { cmd = godot_lsp_cmd })
+
+        local function setup_godot_lsp()
+          if vim.fn.executable(godot_lsp) == 0 then
+            vim
+              .system({
+                'pnpm',
+                'install',
+                '-g',
+                'godot-wsl-lsp',
+                'ts-lsp-client@1.0.4',
+              }, { text = true })
+              :wait()
+
+            vim.lsp.start {
+              name = 'gdscript',
+              cmd = godot_lsp_cmd,
+            }
+          end
         end
-      end
 
-      vim.api.nvim_create_autocmd('FileType', {
-        pattern = 'gdscript',
-        callback = setup_godot_lsp,
-        once = true,
-      })
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = 'gdscript',
+          callback = setup_godot_lsp,
+          once = true,
+        })
+      end
     end,
   },
 
