@@ -680,18 +680,15 @@ require('lazy').setup({
         },
       }
 
-      vim.lsp.enable 'gdscript'
-
       -- NB! This is a workaround to be able to work with godot on windows, with nvim in wsl
-      -- For this to work:
-      -- 1. Set nvim as external editor in godot with path=wt.exe and flags=-M -- wsl.exe bash -ic \"nvim $(wslpath '{file}') +{line}\"
-      -- 2. Enable mirrored network mode by adding the following to .wslconfig in the windows user folder:
-      -- [wsl2]
-      -- networkingMode=mirrored
-      -- 3. Restart wsl by running wsl --shutdown
+      -- Set nvim as external editor in godot with path=wt.exe and flags=-M -- wsl.exe bash -ic \"nvim $(wslpath '{file}') +{line}\"
+      -- and set desired distribution as the default one, using "wsl --set-default <distro-name>"
       if os.getenv 'WSL_DISTRO_NAME' ~= nil then
+        -- The godot-wsl-lsp server is able to resolve the host ip itself, but sometimes resolves to ipv6 instead of ipv4
+        -- which causes the connection to windows to fail. Manually resolving this avoids this problem.
+        local host_ip = vim.fn.system("ip route show | grep -i default | awk '{ print $3}'"):gsub('%s+', '')
         local godot_lsp = 'godot-wsl-lsp'
-        local godot_lsp_cmd = { godot_lsp, '--experimentalFastPathConversion', '--useMirroredNetworking', '--host', '127.0.0.1' }
+        local godot_lsp_cmd = { godot_lsp, '--experimentalFastPathConversion', '--host', host_ip }
 
         vim.lsp.config('gdscript', { cmd = godot_lsp_cmd })
 
@@ -719,6 +716,8 @@ require('lazy').setup({
         })
       end
     end,
+
+    vim.lsp.enable 'gdscript',
   },
 
   { -- Autoformat
@@ -941,8 +940,10 @@ require('lazy').setup({
         'bash',
         'c',
         'diff',
+        'gdscript',
         'html',
         'javascript',
+        'json',
         'lua',
         'luadoc',
         'markdown',
