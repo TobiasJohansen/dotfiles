@@ -12,7 +12,9 @@ esac
 
 # manual
 if has_command nvim; then
+  export EDITOR="nvim"
   export MANPAGER="nvim +Man!"
+  export VISUAL="nvim"
 fi
 
 # starship
