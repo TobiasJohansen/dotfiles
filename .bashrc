@@ -2,6 +2,8 @@ function has_command {
   command -v "$1" >/dev/null 2>&1
 }
 
+alias ls='ls --color'
+
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
