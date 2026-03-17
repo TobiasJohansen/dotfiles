@@ -1060,6 +1060,13 @@ require('lazy').setup({
       end, { desc = '[O]pen [T]erminal' })
 
       vim.keymap.set('n', '<leader>ol', function()
+        local terminals = require('toggleterm.terminal').get_all()
+        for _, term in pairs(terminals) do
+          if term.display_name == 'lazygit' then
+            term:open()
+            return
+          end
+        end
         require('toggleterm.terminal').Terminal
           :new({
             cmd = vim.o.shell .. ' -ic ' .. 'lazygit',
