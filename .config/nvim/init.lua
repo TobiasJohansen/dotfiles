@@ -479,7 +479,15 @@ require('lazy').setup({
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'mason-org/mason.nvim', opts = {} },
+      {
+        'mason-org/mason.nvim',
+        opts = {
+          registries = {
+            'github:mason-org/mason-registry',
+            'github:Crashdummyy/mason-registry',
+          },
+        },
+      },
       { 'mason-org/mason-lspconfig.nvim', opts = {} },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -669,6 +677,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'shfmt', -- Used to format Shell code
         'prettier', -- Used to format JS/TS/HTML/CSS
+        'roslyn',
         -- You can add other tools here that you want Mason to install
       })
 
@@ -948,6 +957,7 @@ require('lazy').setup({
         'angular',
         'bash',
         'c',
+        'c_sharp',
         'diff',
         'gdscript',
         'html',
@@ -1125,6 +1135,15 @@ require('lazy').setup({
     lazy = false,
     opts = {
       input = { enabled = true },
+    },
+  },
+  {
+    'seblyng/roslyn.nvim',
+    ---@module 'roslyn.config'
+    ---@type RoslynNvimConfig
+    opts = {
+      filewatching = 'off',
+      silent = true,
     },
   },
 }, {
