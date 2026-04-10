@@ -113,6 +113,7 @@ return {
       angularls = {},
       bashls = {},
       eslint = {},
+      html = {},
       lua_ls = {
         settings = {
           Lua = {
