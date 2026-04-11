@@ -1,3 +1,7 @@
+local indent_exclude = {
+  'cs',
+}
+
 return { -- Highlight, edit, and navigate code
   'nvim-treesitter/nvim-treesitter',
   branch = 'main',
@@ -54,7 +58,9 @@ return { -- Highlight, edit, and navigate code
         -- vim.wo.foldmethod = 'expr'
 
         -- enables treesitter based indentation
-        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        if not vim.tbl_contains(indent_exclude, args.match) then
+          vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
       end,
     })
   end,
