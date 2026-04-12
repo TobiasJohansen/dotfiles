@@ -6,7 +6,6 @@ return {
     icons = { mappings = vim.g.have_nerd_font },
     spec = {
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
-      { '<leader>t', group = '[T]oggle' },
       { '<leader>r', group = '[R]un' },
       { '<leader>o', group = '[O]pen' },
       { '<leader>c', group = '[C]lose' },
